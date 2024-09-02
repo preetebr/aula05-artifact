@@ -51,3 +51,30 @@ jobs:
         with:
           name: Windows
           path: ./${{ env.FILE_NAME }}.exe
+
+
+  build-go:
+    name: Build Go
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Checkout Go code
+      uses: actions/checkout@v2
+
+    - name: Build ${{ env.FILE_NAME }} for ubuntu-latest
+      run: go build ${{ env.FILE_NAME }}.go
+
+    - name: Build ${{ env.FILE_NAME }} for windows-latest
+      run: GOOS=windows GOARCH=amd64 go build ${{ env.FILE_NAME }}.go
+      
+    - name: Upload artifact for linux
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        name: linux
+        path: ./${{ env.FILE_NAME }}
+
+    - name: Upload artifact for Windows
+      uses: actions/upload-artifact@v1.0.0
+      with:
+        name: windows
+        path: ./${{ env.FILE_NAME }}.exe
