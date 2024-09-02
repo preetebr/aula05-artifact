@@ -53,28 +53,50 @@ jobs:
           path: ./${{ env.FILE_NAME }}.exe
 
 
-  build-go:
-    name: Build Go
+  job-linux:
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+      - name: Run a simple script Hello Word!
+        run: cat /etc/os-release
 
-    - name: Checkout Go code
-      uses: actions/checkout@v2
+  job-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run a simple script to check operation system!
+        run: Get-CimInstance Win32_OperatingSystem
 
-    - name: Build ${{ env.FILE_NAME }} for ubuntu-latest
-      run: go build ${{ env.FILE_NAME }}.go
+  
+  build-go:
+    name: Build GO
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout GO Code
+      uses: actions/checkout@v4
+    - name: Set up Go
+      uses: actions/setup-go@v5.0.2  
+    - name: Build ${{env.FILE_NAME}} for ubuntu-latest
+      run: go build ${{env.FILE_NAME}}.go
+    - name: Build ${{env.FILE_NAME}} for windows-latest
+      run: GOOS=windows GOARCH=amd64 go build ${{env.FILE_NAME}}.go
+    
+  upload-job-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Upload artefato no linux
+        uses: actions/upload-artifact@v4
+        with:
+          name: linux
+          path: ./${{env.FILE_NAME}}
 
-    - name: Build ${{ env.FILE_NAME }} for windows-latest
-      run: GOOS=windows GOARCH=amd64 go build ${{ env.FILE_NAME }}.go
-      
-    - name: Upload artifact for linux
-      uses: actions/upload-artifact@v1.0.0
-      with:
-        name: linux
-        path: ./${{ env.FILE_NAME }}
-
-    - name: Upload artifact for Windows
-      uses: actions/upload-artifact@v1.0.0
-      with:
-        name: windows
-        path: ./${{ env.FILE_NAME }}.exe
+  upload-job-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Upload artefato no windows
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows
+          path: ./${{env.FILE_NAME}}.exe
+          if-no-files-found: warn
+          overwrite: true
