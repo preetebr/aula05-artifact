@@ -67,19 +67,6 @@ jobs:
       - name: Run a simple script to check operation system!
         run: Get-CimInstance Win32_OperatingSystem
 
-  
-  build-go:
-    name: Build GO
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout GO Code
-      uses: actions/checkout@v4
-    - name: Set up Go
-      uses: actions/setup-go@v5.0.2  
-    - name: Build ${{env.FILE_NAME}} for ubuntu-latest
-      run: go build ${{env.FILE_NAME}}.go
-    - name: Build ${{env.FILE_NAME}} for windows-latest
-      run: GOOS=windows GOARCH=amd64 go build ${{env.FILE_NAME}}.go
     
   upload-job-linux:
     runs-on: ubuntu-latest
