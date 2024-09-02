@@ -1,0 +1,53 @@
+name: CI/CD Impacta
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+      branches: [ "main" ]
+  workflow_dispatch:
+
+env:
+  FILE_NAME: ${{vars.FILE_NAME}}
+
+jobs:
+  download-and-run-linux:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          run: |
+            echo "Building... GO!"
+            go build -o ${{ vars.FILENAME }}.go
+
+      - name: Run sh
+        run: |
+          source run.sh
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Linux
+          path: ./${{ env.FILE_NAME }}
+
+  download-only-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          run: |
+            GOOS=windows GOARCH=amd64 go build ${{ vars.FILE_NAME }}.go
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Windows
+          path: ./${{ env.FILE_NAME }}.exe
