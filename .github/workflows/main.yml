@@ -53,20 +53,6 @@ jobs:
           path: ./${{ env.FILE_NAME }}.exe
 
 
-  job-linux:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Run a simple script Hello Word!
-        run: cat /etc/os-release
-
-  job-windows:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v4
-      - name: Run a simple script to check operation system!
-        run: Get-CimInstance Win32_OperatingSystem
-
     
   upload-job-linux:
     runs-on: ubuntu-latest
